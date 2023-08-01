@@ -21,13 +21,26 @@ export const AppGame = ({ chars, word, onClickChar, guessCount }: IProps) => {
       <div className='board'>
         {word.map((word, index) => (
           <div key={index} className='word-container'>
-            {!word.isCorrect ? <p></p> : <p>{word.letter}</p>}
+            {!word.isCorrect ? (
+              <p className='hidden'></p>
+            ) : (
+              <p className='shown'>{word.letter}</p>
+            )}
           </div>
         ))}
-        <p>{guessCount}</p>
+      </div>
+      <div className='keyboard'>
         {chars.map((char) => (
           <AppChar key={char.id} char={char} onClickChar={clickChar} />
         ))}
+      </div>
+      <div className='img-container'>
+        <img
+          src={`/images/${guessCount}.jpg`}
+          alt='hangman '
+          width={200}
+          height={200}
+        />
       </div>
     </>
   );

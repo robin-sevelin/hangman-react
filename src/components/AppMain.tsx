@@ -32,16 +32,19 @@ export const AppMain = () => {
     setSecretWord();
   };
 
-  const checkWin = () => {
-    console.log(guessCount);
+  const checkLoss = () => {
+    if (guessCount === 11) {
+      setGame((game) => {
+        return { ...game, hasLoser: true };
+      });
+    }
+  };
 
-    if (guessCount === 8) {
-      return alert('gubben är hängd');
-    } else if (
-      word.length > 0 &&
-      word.every((word) => word.isCorrect === true)
-    ) {
-      return alert('grattis du vann');
+  const checkWin = () => {
+    if (word.length > 0 && word.every((word) => word.isCorrect === true)) {
+      setGame((game) => {
+        return { ...game, hasWinner: true };
+      });
     }
   };
 
@@ -55,7 +58,17 @@ export const AppMain = () => {
   };
 
   const setSecretWord = () => {
-    const words: string[] = ['hej', 'bil', 'båt', 'katt', 'hund', 'cykel'];
+    const words: string[] = [
+      'kyckling',
+      'lastbil',
+      'båt',
+      'katt',
+      'hund',
+      'cykel',
+      'pokemon',
+      'majskolv',
+      'schampo',
+    ];
     const randomIndex = Math.floor(Math.random() * words.length);
 
     const randomWord: SecretWord[] = words[randomIndex]
@@ -68,6 +81,9 @@ export const AppMain = () => {
   };
 
   const clickChar = (char: Char, charId: number) => {
+    if (game.hasLoser || game.hasWinner) {
+      return;
+    }
     const clickedChar = chars.map((char) => {
       if (charId === char.id) {
         return { ...char, isClicked: true };
@@ -83,8 +99,6 @@ export const AppMain = () => {
   const checkGuess = () => {
     if (guess) {
       if (word.length > 0 && word.some((word) => word.letter === guess)) {
-        console.log('du gissade rätt');
-
         setWord(
           word.map((word) => {
             if (word.letter === guess) {
@@ -99,16 +113,18 @@ export const AppMain = () => {
       }
     }
     checkWin();
+    checkLoss();
   };
 
   const quitGame = () => {
+    setGuessCount(0);
     setGame((game) => {
-      return { ...game, isStarted: false };
+      return { ...game, isStarted: false, hasLoser: false, hasWinner: false };
     });
   };
 
   return (
-    <>
+    <main>
       {!game.isStarted ? (
         <button onClick={startGame}>Starta spelet</button>
       ) : (
@@ -119,9 +135,14 @@ export const AppMain = () => {
             chars={chars}
             onClickChar={clickChar}
           />
-          <button onClick={quitGame}>Avsluta</button>
+
+          {game.hasLoser && <p>Gubben är hängd 👻</p>}
+          {game.hasWinner && <p>Grattis du vann 🥇</p>}
+          <div className='site-nav'>
+            <button onClick={quitGame}>Avsluta</button>
+          </div>
         </div>
       )}
-    </>
+    </main>
   );
 };

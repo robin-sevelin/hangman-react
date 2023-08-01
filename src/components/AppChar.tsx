@@ -12,6 +12,7 @@ export const AppChar = ({ char, onClickChar }: IProps) => {
   return (
     <>
       <button
+        className='key'
         disabled={char.isClicked}
         onClick={() => handleClick(char, char.id)}
       >
